@@ -33,25 +33,34 @@ import java.util.logging.Logger;
  */
 public class SensorSimulator extends JFrame implements ActionListener{
     
-    JButton startSeminar, startLecture , stopSeminar, stopLecture;
+    JButton startSeminar, startLecture , stopSeminar, stopLecture, startDiscussion, stopDiscussion,startTutorial,stopTutorial;
     JLabel answer ;
-    JTextArea Sem, Lec;
+    JTextArea Sem, Lec, Dis, Tut;
     //JLabel Sem, Lec;
-    JPanel Readings, buttonPanel;
+    JPanel Readings, Readings1, buttonPanel, buttonPanel1;
     
     static String file = "./Readings.txt";
-    boolean SeminarRunning, LectureRunning;
+    boolean SeminarRunning, LectureRunning, DiscussionRunning, TutorialRunning;
     
     Timer timer1 = new Timer();
     Timer timer2 = new Timer();
+    Timer timer3 = new Timer();
+    Timer timer4 = new Timer();
     
     int timer1Count=  2*1000; 
     int timer2Count = 2*1000;
+    int timer3Count = 2*1000;
+    int timer4Count = 2*1000;
     
      String semSensors[]= {"2778510","2778511","2778512","2778513","2778514", "2778515"};
      int semValues[]= new int[6];
      String lecSensors[]= {"2345610","2345611","2345612","2345613","2345614", "2345615","2345616" };
      int lecValues[]=new int[7];
+     
+      String disSensors[]= {"2248610","2248611","2248612","2248613"};
+     int disValues[]= new int[4];
+     String tutSensors[]= {"123450","123451","123452"};
+     int tutValues[]=new int[3];
 //     
 //     String a[] ={"2778510","2778511","2778512","2778513","2778514", "2778515"};
 //     int b[]={0,1,2,3,4,5};
@@ -67,50 +76,10 @@ public class SensorSimulator extends JFrame implements ActionListener{
 
         frame.setContentPane(s.createContentPane());
 
-        frame.setDefaultCloseOperation(HIDE_ON_CLOSE);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent evt) {
-                  String line;
-                    try {
-                        br =new BufferedReader (new FileReader (file));
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    try {
-                        while((line = br.readLine()) != null)
-                                {    StringTokenizer st = new StringTokenizer(line);
-                                       String s = st.nextToken();
-                                       Timestamp t = Timestamp.valueOf(st.nextToken()+" "+st.nextToken());
-                                       int value = Integer.parseInt(st.nextToken());
-                                       System.out.println(s+t+value);
-                                        dbObj.insertIntoReadings(s, t , value);
-
-                                }
-                    } catch (IOException ex) {
-                        Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    try {
-                        bw = new BufferedWriter (new FileWriter(file));
-                        System.out.println("Clearing");
-                    } catch (IOException ex) {
-                        Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    try {
-                        bw.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
-                    
-                    System.exit(0);
-                }
-                
-               });
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+     
         frame.pack();
-        frame.setMinimumSize(new Dimension(300, 400));
+        frame.setMinimumSize(new Dimension(300, 500));
         frame.setVisible(true); // Otherwise invisible window
 }
 
@@ -119,15 +88,14 @@ public JPanel createContentPane() {
     JPanel pane = new JPanel();
     pane.setLayout(null);
     
+    
     // Creation of a Panel to contain the buttons 
-      buttonPanel = new JPanel();
+    buttonPanel = new JPanel();
       buttonPanel.setLayout(null);
       buttonPanel.setLocation(10, 0);
-      buttonPanel.setSize(250, 70);
+      buttonPanel.setSize(500, 70);
       pane.add(buttonPanel);
       
-    
-    
     startSeminar = new JButton("Start  SR2");
     startSeminar.setLocation(0, 0);
     startSeminar.setSize(120, 30);
@@ -140,9 +108,10 @@ public JPanel createContentPane() {
     startLecture.setHorizontalAlignment(0);
     buttonPanel.add(startLecture);
     
-    
+
     startSeminar.addActionListener(this);   // register button listener
     startLecture.addActionListener(this);
+    
 
     stopSeminar = new JButton("Stop SR2");
     stopSeminar.setLocation(0, 40);
@@ -158,9 +127,11 @@ public JPanel createContentPane() {
     
     stopSeminar.setVisible(false);
     stopLecture.setVisible(false);
+  
     
     stopSeminar.addActionListener(this);   // register button listener
     stopLecture.addActionListener(this);
+    
     
     
      Readings = new JPanel();
@@ -178,6 +149,70 @@ public JPanel createContentPane() {
     Lec.setLocation(130, 0);
     Lec.setSize(120, 120);
     Readings.add(Lec);
+    
+    ///////////////////////------FOR DR9 and TR3
+      
+    JPanel newpane = new JPanel();
+    newpane.setLayout(null);
+    newpane.setLocation(10, 210);
+    newpane.setSize(500, 210);
+    pane.add(newpane);
+    
+      buttonPanel1 = new JPanel();
+      buttonPanel1.setLayout(null);
+      buttonPanel1.setLocation(10, 0);
+      buttonPanel1.setSize(500, 70);
+      newpane.add(buttonPanel1);
+      
+    startDiscussion = new JButton("Start  DR9");
+    startDiscussion.setLocation(0, 0);
+    startDiscussion.setSize(120, 30);
+    startDiscussion.setHorizontalAlignment(0);
+    buttonPanel1.add(startDiscussion);
+    
+    startTutorial = new JButton("Start  TR3");
+    startTutorial.setLocation(130, 0);
+    startTutorial.setSize(120, 30);
+    startTutorial.setHorizontalAlignment(0);
+    buttonPanel1.add(startTutorial);
+    
+    startDiscussion.addActionListener(this);
+    startTutorial.addActionListener(this);
+    
+    stopDiscussion  = new JButton("Stop DR9");
+    stopDiscussion.setLocation(0, 40);
+    stopDiscussion.setSize(120, 30);
+    stopDiscussion.setHorizontalAlignment(0);
+    buttonPanel1.add(stopDiscussion);
+    
+     stopTutorial  = new JButton("Stop TR3");
+    stopTutorial.setLocation(130, 40);
+    stopTutorial.setSize(120, 30);
+    stopTutorial.setHorizontalAlignment(0);
+    buttonPanel1.add(stopTutorial);
+    
+      stopDiscussion.setVisible(false);
+    stopTutorial.setVisible(false);
+     stopDiscussion.addActionListener(this);   // register button listener
+    stopTutorial.addActionListener(this);
+    
+    
+     Readings1 = new JPanel();
+     Readings1.setLayout(null);
+     Readings1.setLocation(10, 70);
+     Readings1.setSize(260, 120);
+     newpane.add(Readings1);
+     
+     
+    Dis = new JTextArea("Discussion");
+    Dis.setLocation(0, 0);
+    Dis.setSize(120, 120);
+    Readings1.add(Dis);
+
+    Tut = new JTextArea("Tutorial");
+    Tut.setLocation(130, 0);
+    Tut.setSize(120, 120);
+    Readings1.add(Tut);
      
     return pane;
 }
@@ -220,10 +255,12 @@ public static void main(String[] args) throws SQLException {
                     if (SeminarRunning) {
                        Sem.setText(""+startSimulation(semSensors, semValues));;
                              try {
-                            insertIntoFile(semSensors,semValues);
-                        } catch (FileNotFoundException ex) {
-                            Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
+                             
+                            insertIntoDB(semSensors, semValues);     
+                        
+                        } 
+ 
+                             catch (SQLException ex) {
                             Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
@@ -241,12 +278,60 @@ public static void main(String[] args) throws SQLException {
                     if (LectureRunning) {
                         Lec.setText(""+startSimulation(lecSensors, lecValues));
                         try {
-                            insertIntoFile(lecSensors, lecValues);
-                        } catch (FileNotFoundException ex) {
+                            insertIntoDB(lecSensors, lecValues);  
+                            //insertIntoFile(lecSensors, lecValues);
+                        } catch (SQLException ex) {
                             Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
+                        } 
+                       
+                    }
+                }
+       },0,2*1000, TimeUnit.MILLISECONDS);
+     //   answer.setText("Lecture simulation started");
+      
+       
+    }
+    
+    if(source == startTutorial)
+    {
+        startTutorial.setVisible(false);
+       stopTutorial.setVisible(true);
+       TutorialRunning = true;
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Runnable() {
+                @Override public void run() {
+                    if (TutorialRunning) {
+                        Tut.setText(""+startSimulation(tutSensors, tutValues));
+                        try {
+                            insertIntoDB(tutSensors, tutValues);  
+                            //insertIntoFile(lecSensors, lecValues);
+                        } catch (SQLException ex) {
                             Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        } 
+                       
+                    }
+                }
+       },0,2*1000, TimeUnit.MILLISECONDS);
+     //   answer.setText("Lecture simulation started");
+      
+       
+    }
+    
+    if(source == startDiscussion)
+    {
+        startDiscussion.setVisible(false);
+       stopDiscussion.setVisible(true);
+       DiscussionRunning = true;
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Runnable() {
+                @Override public void run() {
+                    if (DiscussionRunning) {
+                        Dis.setText(""+startSimulation(disSensors, disValues));
+                        try {
+                            insertIntoDB(disSensors, disValues);  
+                            //insertIntoFile(lecSensors, lecValues);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(SensorSimulator.class.getName()).log(Level.SEVERE, null, ex);
+                        } 
+                       
                     }
                 }
        },0,2*1000, TimeUnit.MILLISECONDS);
@@ -269,7 +354,25 @@ public static void main(String[] args) throws SQLException {
        stopLecture.setVisible(false);
        LectureRunning = false;
     }
+    
+    if(source == stopDiscussion)
+    {
+         
+        startDiscussion.setVisible(true);
+       stopDiscussion.setVisible(false);
+       DiscussionRunning = false;
+       
+       
+    }
+    if(source == stopTutorial)
+    {
+        startTutorial.setVisible(true);
+       stopTutorial.setVisible(false);
+       TutorialRunning = false;
+    }
   }
+ 
+ 
  
  public  void writeToDB() throws FileNotFoundException, IOException, SQLException
  {   String line;
@@ -311,13 +414,11 @@ public static void main(String[] args) throws SQLException {
 public void insertIntoDB(String[] sensors,int[] sensorValues) throws SQLException
 {
     
-    System.out.println("Inserting");
-     
-         
+    
       for(int i=0;i<sensorValues.length;i++)
     {    Date dt = new Date(Calendar.getInstance().getTimeInMillis()); // Your exising sql Date .
         Timestamp timestamp = new Timestamp(dt.getTime());
-        System.out.println(i);
+        System.out.println("Inserting" + i +" "+ sensors[i]+"\t"+timestamp+"\t"+sensorValues[i]);
         dbObj.insertIntoReadings(sensors[i],timestamp, sensorValues[i]);
         
     }
